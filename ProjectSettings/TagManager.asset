@@ -9,6 +9,7 @@ TagManager:
   - Ground
   - GameManager
   - UIManager
+  - GrabableObjects
   layers:
   - Default
   - TransparentFX

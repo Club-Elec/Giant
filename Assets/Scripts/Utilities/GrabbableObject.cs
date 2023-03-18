@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class GrabbableObject : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField] [Tooltip("Le rigidbody de l'objet")]
     private Rigidbody rb;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Le collider de l'objet")]
     private Collider col;
 
     void Start()
@@ -14,38 +14,39 @@ public class GrabbableObject : MonoBehaviour
     }
 
     /// <summary>
-    /// Function called when the object is grabbed, remove all the physics constraints
+    /// Fonction appelé quand l'objet est attrapé, enlève toutes les contraintes de physique
     /// </summary>
     public void Grab()
     {
-        Debug.Log("Object grabbed");
+        // Debug.Log("Object grabbed");
         rb.constraints = RigidbodyConstraints.None;
         rb.useGravity = false;
         col.isTrigger = true;
     }
 
     /// <summary>
-    /// Function called when the object is throwed, setting the object to collider mode
+    /// Fonction appelé quand l'objet est relaché, remet les contraintes de physique
     /// </summary>
     public void Ungrab()
     {
-        Debug.Log("Object Ungrabbed");
+        //Debug.Log("Object Ungrabbed");
         rb.useGravity = true;
         col.isTrigger = true;
     }
 
     /// <summary>
-    /// Collision checking function
+    /// Fonction pour vérifier la collision avec un autre objet
     /// </summary>
-    /// <param name="other">The object that enter collision with this object</param>
+    /// <param name="other">L'objet avec lequel on est entré en collision</param>
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Mob")) {
             other.GetComponent<MobController>().kill();
-            // Adding animation & graphics of crate destroy
+
+            // TODO: ajouté les animations de destruction d'objet
             Destroy(this.gameObject, 0.5f);
-        } else if (other.gameObject.layer == 6) { // If we touch the ground layer, then destroy
-            // Adding animation & graphics of crate destroy
+        } else if (other.gameObject.layer == 6) { // Si on touche le layer du sol, destruction de l'objet (Probablement à enlever)
+            // TODO: ajouté les animations de destruction d'objet
             col.isTrigger = false;
             Destroy(this.gameObject, 0.5f);
         }

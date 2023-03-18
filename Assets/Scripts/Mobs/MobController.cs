@@ -6,23 +6,20 @@ using UnityEngine.AI;
 [RequireComponent(typeof(CapsuleCollider))]
 public class MobController : MonoBehaviour
 {
-    [Header("Mob movement")]
-    [SerializeField]
+    [Header("Mouvement du Mob")]
+    [SerializeField] [Tooltip("Le NavMeshAgent du mob")]
     private NavMeshAgent agent;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("L'Animator du mob")]
     private Animator animator;
 
-    [SerializeField]
-    private Vector3 destination;
+    [SerializeField] [Tooltip("Le temps minimum d'attente avant de bouger")]
+    private float minWaitTime = 0.5f; 
 
-    [SerializeField]
-    private float minWaitTime = 0.5f;
-
-    [SerializeField]
+    [SerializeField] [Tooltip("Le temps maximum d'attente avant de bouger")]
     private float maxWaitTime = 2f;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("La distance à laquelle le mob considère qu'il est arrivé à destination")]
     private float distDestination = .4f;
 
 /*
@@ -35,29 +32,31 @@ public class MobController : MonoBehaviour
     private bool playerDetected = false;*/
 
     [Header("Dying")]
-    [SerializeField]
+    [SerializeField] [Tooltip("Gameboject contenant le mesh du mob")]
     private GameObject body;
-    [SerializeField]
+    [SerializeField] [Tooltip("Gameboject contenant les particules de mort du mob")]
     private GameObject particle;
 
     [Header("Debug")]
 
-    [SerializeField]
+    [SerializeField] [Tooltip("La destination du mob")]
+    private Vector3 destination;
+
+    [SerializeField] [Tooltip("Mob en mouvement ?")]
     private bool isMoving = true;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Mob attrapé par le joueur ?")]
     private bool isHooked = false;
 
-    private SpawnerManager spawnerManager;
-    private GameObject player;
+    private SpawnerManager spawnerManager; // Référence du SpawnerManager
+    private GameObject player; // Référence du joueur
     
     private void Start() 
     {
-        // Getting the spawner manager instance
         spawnerManager = GameObject.FindGameObjectWithTag("SpawnerManager").GetComponent<SpawnerManager>();
         player = GameObject.FindGameObjectWithTag("Player");
 
-        // Desactivating the ragdoll
+        // Désactivation du ragdoll
         Rigidbody[] childs = transform.GetComponentsInChildren<Rigidbody>();
         foreach (var child in childs) {
             child.useGravity = false;
@@ -76,7 +75,7 @@ public class MobController : MonoBehaviour
     void Update()
     {
         if (!isHooked) {
-            // If the mob is near it's destination we stop it for a certain time and give a new destination
+            // Si le mob est proche de sa destination, on l'arrête un certain temps et on lui donne une nouvelle destination
             if (agent.remainingDistance < distDestination && isMoving) {
                 isMoving = false;
                 agent.isStopped = true;
@@ -84,7 +83,6 @@ public class MobController : MonoBehaviour
                 StartCoroutine(WaitingTillNextMove());
             }
             animator.SetFloat("Speed", agent.velocity.magnitude/agent.speed);
-
             /*if (!playerDetected) {
                 // If the player is in the detect zone of the mob
                 if (Vector3.Distance(player.transform.position, this.transform.position) <= detectZone) {
@@ -93,10 +91,15 @@ public class MobController : MonoBehaviour
                 }
             }*/
         }
+
+        // Si le mob est sous le sol, on le tue
+        if (this.transform.position.y < -5f) {
+            StartCoroutine(Dying());
+        }
     }
 
     /// <summary>
-    /// Waiting coroutine before mob can move
+    /// Coroutine d'attente avant que le mob puisse bouger
     /// </summary>
     IEnumerator WaitingTillNextMove()
     {
@@ -106,7 +109,7 @@ public class MobController : MonoBehaviour
     }
 
     /// <summary>
-    /// Give the mob a new destination to go
+    /// Donner une destination au mob
     /// </summary>
     private void GetNewDestination()
     {
@@ -125,7 +128,7 @@ public class MobController : MonoBehaviour
     }
 
     /// <summary>
-    /// Disable the Agent, only when grabbed by player
+    /// Desactive le NavMeshAgent, seulement quand le mob est attrapé par le joueur
     /// </summary>
     public void Grab()
     {
@@ -137,7 +140,7 @@ public class MobController : MonoBehaviour
     }
 
     /// <summary>
-    /// Enable the ragdoll mode, only when ungrabbed by player
+    /// Activer le ragdoll, seulement quand le mob est relaché par le joueur
     /// </summary>
     public void Ungrab()
     {
@@ -155,13 +158,12 @@ public class MobController : MonoBehaviour
 
 
     /// <summary>
-    /// Checking if the mob collide with the ground
+    /// Vérification si le mob touche le sol
     /// </summary>
-    /// <param name="other">Collider which whom the mobs collide</param>
+    /// <param name="other">Collider avec qui le mob est entré en collision</param>
     private void OnTriggerEnter(Collider other)
     {
-        // TODO: Call this on each member of the ragdoll..
-        if (other.CompareTag("Ground") && isHooked) { // If we touch the ground layer, then destroy
+        if (other.CompareTag("Ground") && isHooked) { // Si le mob touche le sol alors on le tue
             Rigidbody[] childs = transform.GetComponentsInChildren<Rigidbody>();
             foreach (var child in childs) {
                 child.useGravity = false;
@@ -172,7 +174,7 @@ public class MobController : MonoBehaviour
     }
 
     /// <summary>
-    /// public function to kill the mob
+    /// Fonction publique pour tuer le mob
     /// </summary>
     public void kill()
     {
@@ -180,7 +182,7 @@ public class MobController : MonoBehaviour
     }
 
     /// <summary>
-    /// Corroutine to play the mob death animation
+    /// Coroutine pour jouer l'animation de mort du mob
     /// </summary>
     IEnumerator Dying()
     {
@@ -191,7 +193,7 @@ public class MobController : MonoBehaviour
     }
 
     /// <summary>
-    /// Shows the detecting area of the mob in the scene editor
+    /// Affiche la zone de détection du mob & la destination dans l'éditeur de scène
     /// </summary>
     private void OnDrawGizmos() 
     {

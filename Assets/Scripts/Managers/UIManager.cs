@@ -9,59 +9,60 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField]
-    private GameObject[] MainMenuGameObjects;
+    [SerializeField] [Tooltip("Un array de GameObjects à activer pour le menu principal")]
+    private GameObject[] MainMenuGameObjects; 
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Un array de GameObjects à activer pour le menu de sortie")]
     private GameObject[] ExitGameObjects;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Un bouton pour ouvrir le menu de sortie du jeu")]
     private GameObject ExitButton;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Un array de GameObjects à activer quand le jeu est gagné")]
     private GameObject[] WonGameObjects;
 
     [Header("Settings")]
-    [SerializeField]
+    [SerializeField] [Tooltip("Le mixeur audio pour changer le volume")]
     private AudioMixer audioMixer;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Le slider pour changer le volume")]
     private InteractionSlider volumeSlider;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Le texte pour afficher le volume")]
     private TextMeshPro volumeText;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Le slider pour changer la résolution")]
     private InteractionSlider resolutionSlider;
 
-    [SerializeField]
+    [SerializeField] [Tooltip("Le texte pour afficher la résolution")]
     private TextMeshPro resolutionText;
 
+    // Un array des résolutions possibles
     private Resolution[] resolutions = { new Resolution { width = 1920, height = 1080 }, new Resolution { width = 1280, height = 720 }, new Resolution { width = 800, height = 600 } };
 
 
     private void Start() 
     {
-        // Hide all the GameObjects needed for the won
+        // Cacher tous les GameObjects du menu de victoire
         foreach (var gameObject in WonGameObjects) {
             gameObject.SetActive(false);
         }
 
-        // Show all the GameObjects needed for the UI
+        // Afficher tous les GameObjects du menu principal
         MainMenuGameObjects[0].SetActive(true);
     }
 
     /// <summary>
-    /// Function to launch the game, called by a button on the menu
+    /// Fonction pour lancer le jeu, appelée par un bouton du menu
     /// </summary>
     public void Play()
     {
-        // Hide all the GameObjects needed for the won
+        // Cacher tous les GameObjects du menu de victoire
         foreach (var gameObject in WonGameObjects) {
             gameObject.SetActive(false);
         }
 
-        // Hide all the UI GameObjects
+        // Cacher tous les GameObjects du menu principal
         MainMenuGameObjects[0].SetActive(false);
 
         UICancelExit();
@@ -69,16 +70,16 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Function to stop the game, called by a button on the menu
+    /// Fonction pour arrêter le jeu, appelée par un bouton du menu
     /// </summary>
     public void Stop()
     {
-        // Show all the UI GameObjects
+        // Afficher tous les objets du menu principal
         MainMenuGameObjects[0].SetActive(true);
     }
 
     /// <summary>
-    /// Function to exit the game, called by a button on the menu
+    /// Fonction pour quitter le jeu, appelée par un bouton du menu
     /// </summary>
     public void UIExit()
     {
@@ -89,64 +90,65 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Function to cancel the exit
+    /// Fonction pour annuler la sortie du jeu
     /// </summary>
     public void UICancelExit()
     {
         ExitButton.SetActive(true);
-        // Hide all the UI GameObjects
+
+        // Cacher tous les objets du menu de sortie
         foreach (var gameObject in ExitGameObjects) {
             gameObject.SetActive(false);
         }
     }
 
     /// <summary>
-    /// Function called when the game is won
+    /// Fonction appelée quand le jeu est gagné
     /// </summary>
     public void Win() 
     {
-        // Show all the GameObjects needed for the won
+        // Afficher tous les objets du menu de victoire
         foreach (var gameObject in WonGameObjects) {
             gameObject.SetActive(true);
         }
     }
 
     /// <summary>
-    /// Function to open the settings menu, called by a button
+    /// Fonction pour ouvrir le menu de paramètres, appelée par un bouton
     /// </summary>
     public void OpenSettings() 
     {
-        // Hide the Main Menu GameObject
+        // Cacher le menu principal (Jouer / Paramètres)
         MainMenuGameObjects[2].SetActive(false);
 
-        // Show the Settings Menu GameObject
+        // Afficher le menu de paramètres
         MainMenuGameObjects[3].SetActive(true);
     } 
 
     /// <summary>
-    /// Function to close the settings menu, called by a button
+    /// Fonction pour fermer le menu de paramètres, appelée par un bouton
     /// </summary>
     public void CloseSettings() 
     {
-        // Hide the Settings Menu GameObject
+        // Cacher le menu de paramètres
         MainMenuGameObjects[3].SetActive(false);
 
-        // Show the Main Menu GameObject
+        // Afficher le menu principal (Jouer / Paramètres)
         MainMenuGameObjects[2].SetActive(true);
     }
 
     /// <summary>
-    /// Function to change the volume in the game
+    /// Fonction pour changer le volume dans le jeu
     /// </summary>
     public void SetVolume()
     {
-        Debug.Log("Volume: "+ volumeSlider.HorizontalSliderValue);
+        //Debug.Log("Volume: "+ volumeSlider.HorizontalSliderValue);
         audioMixer.SetFloat("Volume", volumeSlider.HorizontalSliderValue);
         volumeText.text = "Volume: " + volumeSlider.HorizontalSliderValue * 100;
     }
 
     /// <summary>
-    /// Function to put the game in fullscreen
+    /// Fonction pour mettre le jeu en plein écran
     /// </summary>
     public void SetFullscreen()
     {
@@ -155,11 +157,11 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Function to change the resolution of the game
+    /// Fonction pour changer la résolution du jeu
     /// </summary>
     public void SetResolution()
     {
-        Debug.Log("Resolution: " + resolutions[resolutionSlider.horizontalStepValue - 1].width + "x" + resolutions[resolutionSlider.horizontalStepValue - 1].height);
+        //Debug.Log("Resolution: " + resolutions[resolutionSlider.horizontalStepValue - 1].width + "x" + resolutions[resolutionSlider.horizontalStepValue - 1].height);
         Resolution resolution = resolutions[resolutionSlider.horizontalStepValue - 1];
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
         resolutionText.text = "RESOLUTION: " + resolution.width + "x" + resolution.height;

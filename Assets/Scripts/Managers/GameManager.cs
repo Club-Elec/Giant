@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField] [Tooltip("Un array de GameObjects à activer lors du lancement du jeu")]
     private GameObject[] PlayGameObjects;
 
-    private SpawnerManager spawnerManager;
-    private UIManager UImanager;
+    private SpawnerManager spawnerManager; // Référence vers le SpawnerManager
+    private UIManager UImanager; // Référence vers l'UIManager
 
     private void Start() 
     {
-        // Hide all the GameObjects needed for the game
+        // Cacher tous les GameObjects nécessaires au jeu
         foreach (var gameObject in PlayGameObjects) {
             gameObject.SetActive(false);
         }
@@ -23,27 +23,27 @@ public class GameManager : MonoBehaviour
 
 
     /// <summary>
-    /// Function to stop the game, called by a button on the menu
+    /// Fonction pour arrêter le jeu, appelée par un bouton du menu
     /// </summary>
     public void Stop()
     {
         UImanager.Stop();
         spawnerManager.Stop();
 
-        // Hide all the GameObjects needed for the game
+        // Cacher tous les GameObjects nécessaires au jeu
         foreach (var gameObject in PlayGameObjects) {
             gameObject.SetActive(false);
         } 
     }
 
     /// <summary>
-    /// Function to reset the game to it's default state
+    /// Fonction pour réinitialiser le jeu à son état par défaut
     /// </summary>
     public void Play()
     {
         UImanager.Play();
 
-        // Show all the GameObjects needed for the game
+        // Afficher tous les GameObjects nécessaires au jeu
         foreach (var gameObject in PlayGameObjects) {
             gameObject.SetActive(true);
         }
@@ -53,13 +53,13 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Function called when the game is won
+    /// Fonction appelée lorsque le jeu est gagné
     /// </summary>
     public void Win() 
     {
         spawnerManager.Stop();
 
-        // Hide all the GameObjects needed for the game
+        // Cacher tous les GameObjects nécessaires au jeu
         foreach (var gameObject in PlayGameObjects) {
             gameObject.SetActive(false);
         }

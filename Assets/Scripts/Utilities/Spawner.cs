@@ -2,17 +2,20 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField] [Tooltip("La zone de spawn autour du spawner")]
     private float spawningZone = 3f;
+
+    [SerializeField] [Tooltip("La couleur du Gizmo")]
+    private Color32 customColor;
 
     public float SpawningZone { get => spawningZone; }
 
     /// <summary>
-    /// Shows the spawning area in the scene editor
+    /// Afficher la zone de spawn dans l'éditeur de scène
     /// </summary>
     private void OnDrawGizmos() 
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = customColor;
         Gizmos.DrawWireSphere(transform.position, spawningZone);
     }
 }
